@@ -1,0 +1,262 @@
+#include <iostream>
+#include <cstdlib>
+#include <conio.h>
+#include <string>
+#include <ctime>
+
+using namespace std;
+
+
+struct Item
+{
+       int LP;
+       char Nazwa[30];
+       int Damage;
+       int Cena;
+};
+
+struct Player
+{
+       int Level;
+       int Exp;
+       string Imie;
+       int Damage;
+       int Defense;
+       int HP;
+       Item Bron;
+       int Gold;
+       
+};
+
+struct Monster
+{
+       int HP;
+       int Damage;
+       int Exp;
+       int Gold;
+};
+
+void menu(void);
+Player walka(Player, Monster);
+void menuwalka(void);
+Player chatkawiedzmy(Player);
+Player sklep(Player, Item, Item);
+
+
+int main()
+{
+int wyborwalka;
+string imie;
+int wybormenu;
+srand(time(NULL));
+Monster Orc=
+{
+        10,
+        5,
+        50,
+        100
+};
+
+Monster Smok=
+{
+        25,
+        8,
+        150,
+        1000
+};
+
+Item piesci=
+{
+     0,
+     "Gole Piesci",
+     1,
+     0
+};
+
+Item mieczdrewniany=
+{
+     1,
+     "Miecz Drewniany",
+     2,
+     100
+};
+
+Item mieczstalowy=
+{
+     2,
+     "Miecz Stalowy",
+     5,
+     500
+};
+
+cout << "DUNGEON ALPHA" << endl << endl;
+
+cout << "Podaj Imie swojej postaci(Do 20 znakow)" << endl;
+cin >> imie;
+Player Gracz=
+{
+       1,
+       0,
+       "Default",
+       1,
+       2,
+       100,
+       piesci,
+       0
+};
+Gracz.Imie = imie;
+    do{
+    menu();
+    
+    cin >> wybormenu;
+    
+    switch (wybormenu)
+    {
+           case 1:
+                menuwalka();
+                cin >> wyborwalka;
+                switch (wyborwalka)
+                {
+                       case 1:
+                            Gracz=walka(Gracz, Orc);
+                            break;
+                       case 2:
+                            Gracz=walka(Gracz, Smok);
+                            break;
+                }
+                break;
+           case 2:
+                Gracz=sklep(Gracz, mieczdrewniany, mieczstalowy);
+                break;
+           case 3:
+                cout << "Imie - " << Gracz.Imie << endl;
+                cout << "Twoje zloto - " << Gracz.Gold << endl;
+                cout << "Poziom - " << Gracz.Level << endl;
+                cout << "Doswiadczenie - " << Gracz.Exp << endl;
+                cout << "Poziom zycia - " <<Gracz.HP << endl;
+                cout << "Pancerz - " << Gracz.Defense << endl;
+                cout << "Obrazenia - " << Gracz.Damage*Gracz.Bron.Damage << endl;
+                cout << "Akutalna bron - " << Gracz.Bron.Nazwa << endl;
+                break;
+           case 4:
+                Gracz=chatkawiedzmy(Gracz);
+                break;
+           default:
+                   cout << "Podaj prawidlowa wartosc" << endl;
+                   break;
+    }
+}while(Gracz.Level < 40);
+while(Gracz.Level < 40);
+    system ("Pause");
+    return 0;
+}
+
+void menu()
+{
+     cout << "   MENU GLOWNE" << endl << endl;
+     cout << "1. Walka!" << endl;
+     cout << "2. Sklep" << endl;
+     cout << "3. Postac" << endl;
+     cout << "4. Chatka Wiedzmy" << endl;
+}
+
+Player walka(Player Gracz, Monster Potwor)
+{ 
+    int HPM=Potwor.HP;
+    int HPG=Gracz.HP;
+    int DMGM=Potwor.Damage;
+    int DMGG=Gracz.Damage*Gracz.Bron.Damage;
+    int DEFG=Gracz.Defense;
+    int GOLD=Gracz.Gold;
+    int GOLDM=Potwor.Gold;
+    int EXP=Gracz.Exp;
+    int EXPM=Potwor.Exp;
+    do
+    {
+                 HPM=HPM-DMGG;
+                 HPG=HPG-(DMGM/DEFG);
+                 cout << "Twoje HP - " << HPG << endl;
+                 cout << "HP Potwora - " << HPM << endl;
+                 getch();
+    }
+    while(HPG>=0 && HPM>0);
+    if(HPG>0)
+    {
+             cout << "Gratulacje !" << endl;
+             cout << "Zdobywasz " << GOLDM << " zlota oraz " << EXPM << " doswiadczenia"  << endl;
+    }
+    else 
+    {
+         cout << "Wybacz, to koniec." << endl;
+    };
+    EXP=+EXPM;
+    
+    if(EXP>100)
+    {
+                     Gracz.Level+=1;
+                     Gracz.Exp=EXP-100; 
+    }
+    Gracz.Gold=GOLD+GOLDM;
+    Gracz.HP=HPG;
+    return Gracz;
+}
+
+void menuwalka()
+{
+     cout << "  Wybierz przeciwnika" << endl;
+     cout << "1. Ork" << endl;
+     cout << "2. Smok" << endl;
+}
+
+Player chatkawiedzmy(Player Gracz)
+{
+       int wybor;
+       cout << "Czy chcesz sie uleczyc za 100 zlota?" << endl;
+       cout << "1. Tak" << endl;
+       cout << "2. Powrot" << endl;
+       cin >> wybor;
+       if(wybor==1)
+       {
+                   if(Gracz.Gold<100)
+                   {
+                                     cout << "Przykro mi, nie masz zlota" << endl;
+                   }
+                   else
+                   {
+                       Gracz.HP=100;
+                       Gracz.Gold-=100;
+                   }
+       }
+       return Gracz;
+}
+
+Player sklep(Player Gracz, Item mieczdrewniany, Item mieczstalowy)
+{
+     int gold=Gracz.Gold;
+     int wyborprzedmiotu;
+     cout << "WITAJ W SKLEPIE" << endl << endl;
+     cout << "LP    Nazwa              Damage    Cena" << endl;
+     cout << mieczdrewniany.LP << "     " << mieczdrewniany.Nazwa << "    " << mieczdrewniany.Damage << "         " << mieczdrewniany.Cena << endl;
+     cout << mieczstalowy.LP << "     " << mieczstalowy.Nazwa << "      " << mieczstalowy.Damage << "         " << mieczstalowy.Cena << endl;
+     cout << "Czy chcesz cos kupic? Jesli tak, wybierz LP przedmiotu lub 3 by powrocic" << endl;
+     cin >> wyborprzedmiotu;
+     if(wyborprzedmiotu==1)
+     {
+                           if(gold<100)
+                           {
+                                       cout << "przykro mi, nie masz pieniedzy" << endl;
+                           }
+                           else
+                           Gracz.Bron=mieczdrewniany;
+     }
+     if(wyborprzedmiotu==2)
+     {
+                           if(gold<500)
+                           {
+                                       cout << "przykro mi, nie masz pieniedzy" << endl;
+                           }
+                           else
+                           Gracz.Bron=mieczstalowy;
+     }
+     return Gracz;
+}
